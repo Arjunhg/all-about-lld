@@ -1,0 +1,72 @@
+--> Object-Oriented Programming (OOP) is a programming paradigm that organizes code into objects, which represent real-world entities. It allows developers to model complex systems by breaking them down into smaller, manageable pieces.
+
+    : The foundation of OOP lies in classes and objects, which together enable the creation of structured, reusable, and scalable code. 🧩
+
+    --> Classes
+
+        : Class: It's like a blueprint or template—it defines what a thing is and what it can do. It contains attributes (data/fields) and methods (behavior/functions).
+
+            : 🛠 Think of a class as a car design blueprint—defining wheels, engine, doors, color, etc.—but it's just a concept at this point, not something you can drive.
+
+        : Contains attributes and methods
+
+            : “Attributes and methods define what could happen, not what will happen.”
+            : Attributes define what kind of data an object can hold.
+            : Methods define what kind of actions it can perform.
+
+    --> Objects
+        
+        : It's the actual instance of that class—a real, usable entity created from the blueprint.
+
+            : 🚗 The car parked in your driveway is the object—a real-world version of the blueprint.
+
+        --> Why use classes and objects?
+
+            1. Reusability: Write a class once and create multiple objects with different data. ♻️
+
+            2. Modularity: Classes help organize code into logical sections, making it easier to debug and maintain. 🧩
+
+            3. Abstraction: Focus on the essential details of an entity without worrying about the internal workings. 🔍
+
+            4. Scalability: Adding new features is straightforward without affecting existing code. 📈
+
+    --> Constructors
+
+        : Constructors are special methods in object-oriented programming used to initialize objects of a class.
+        : They play a pivotal role in ensuring that an object is in a valid state right after it is "created". 
+        : Unlike regular methods, constructors have the same name as the class and do not have a return type. 🔧
+
+        : Features
+
+            1. Automatic Invocation: Constructors are called automatically when an object of the class is instantiated. 🔄
+
+            2. No Return Type: Unlike methods, constructors do not have a return type, not even void. 🚫
+
+            3. Overloading Support: You can have multiple constructors with different parameters in the same class, enabling flexibility in object initialization. 🔁
+
+        : Types
+
+            1. Default Constructor (No-Argument Constructor)
+
+                : If you do not explicitly create any constructor for a class, Java automatically provides a default constructor.
+                : This constructor initializes instance variables to their default values based on the data type. 🔄
+
+                    int → 0
+                    double → 0.0
+                    boolean → false
+                    Object → null
+
+            2. Parameterized Constructor
+
+                : A parameterized constructor takes arguments to initialize the object with specific values.
+
+            3. Copy Constructor
+
+                : A copy constructor initializes an object using another object of the same class.
+
+            4. Private Constructor
+
+                : A private constructor is used to restrict object creation from outside the class. It is commonly used in Singleton Design Pattern.
+
+‍
+
