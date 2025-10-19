@@ -100,7 +100,7 @@ public class TicTacToeGame implements BoardGames {
 
             // Check game state after the move
             board.checkGameState(gameContext, currentPlayer);
-            switchPlayer();
+            if(!gameContext.isGameOver()) switchPlayer();
         }while(!gameContext.isGameOver());
         announceResult();
     }
