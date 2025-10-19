@@ -1,138 +1,111 @@
-Low-Level Design: Tic Tac Toe Game 🎲
-Tic Tac Toe, known colloquially as "Xs and Os," is a two-player game typically played on a 3x3 grid. The objective is simple: be the first to form a horizontal, vertical, or diagonal line of three of your marks (either "X" or "O"). The elegance of the game lies in its deceptive complexity, while the rules are straightforward, devising an unbeatable strategy demands a keen understanding of the game's dynamics.
+Tic‑Tac‑Toe: A Practical, Extensible Design
 
-‍
+Building a small game is a great excuse to practice clean architecture. This document walks through the Tic‑Tac‑Toe design used in this project—what problems it solves, how the pieces fit together, and how you can extend it without breaking what works today.
 
-Rules of the game : 
-Firstly let's understand the rules of the game:
+## Why this design
 
-• Setup: The game is played on a 3 * 3 grid. One player uses 'X' another player uses 'O' and each player takes turns making their moves.
+We want a game that is:
+- Easy to read and reason about
+- Safe against illegal moves and broken flows
+- Simple to extend (AI player, different board sizes, UI swap)
 
-‍
+That leads us to a few focused design choices: isolate responsibilities, program to interfaces, and make state transitions explicit.
 
-• Winner: The game is won by the player placing his or her symbol in a row, column, or diagonal. The first player to get three symbols in a row wins the game. When the player reaches this, the game ends immediately.
+## Core challenges (what we must get right)
 
-‍
+- Game state: who’s turn it is, whether the game is over, and why (win/draw)
+- Move validation: only allow in-bounds, empty cells
+- Turn alternation: X then O, and so on—unless the game ends
+- End conditions: detect wins across rows/columns/diagonals; detect draw when the board fills up with no winner
 
-• Draw: If all the grid cells are filled and no player has three symbols in a row, the game will be a tie or a draw.
+## Architecture at a glance
 
-‍
+```mermaid
+graph TD
+	Main[Main] --> G[TicTacToeGame]
+	G -->|asks for move| PlayerX[Player (X)]
+	G -->|asks for move| PlayerO[Player (O)]
+	PlayerX -->|makeMove(board)| StratX[PlayerStrategy]
+	PlayerO -->|makeMove(board)| StratO[PlayerStrategy]
+	G -->|apply + validate| Board[Board]
+	G -->|check state| Context[GameContext]
+	Context -->|current| State[GameState]
+```
 
-• Illegal Moves: A player cannot place his or her symbol on a tile occupied by an opponent's symbol or their own symbol. The move must be made to an empty cell.
+- Main: wires strategies and starts the game.
+- TicTacToeGame: the conductor—runs the loop, asks the current player for a move, applies it on the board, checks state, switches player.
+- Player/PlayerStrategy: how a move is decided (human input today; AI later).
+- Board: the source of truth for the grid and rules (validate/apply, detect win/draw, display).
+- GameContext/GameState: encapsulates the terminal outcome and message.
 
+## Responsibilities by component
 
-Interview Setting 🤝
-Point 1 : Introduction and Vague Problem Statement
+### TicTacToeGame (Controller/Facade)
+- Owns the main game loop.
+- Calls `currentPlayer.getPlayerStrategy().makeMove(board)` to get a Position.
+- Calls `board.makeMove(position, symbol)` to apply it safely.
+- Calls `board.checkGameState(context, currentPlayer)` to update the outcome.
+- Switches player if the game is not over and repeats.
+- Prints the final result via `context.getCurrentState().getResultMessage()`.
 
-🧑‍💼Interviewer: Let's start with a basic problem statement. Design a Tic Tac Toe game system.
+### Player and PlayerStrategy (Strategy Pattern)
+- `PlayerStrategy` defines a single responsibility: return the next `Position` for a given `Board`.
+- `HumanPlayerStrategy` prompts on the console and parses row/column input.
+- Swap in a different strategy (e.g., Random, Minimax AI) without touching the controller or board.
 
-‍
+### Board
+- Holds `rows x cols` grid of `Symbol` values.
+- `isValidMove(Position)`: bounds + emptiness check.
+- `makeMove(Position, Symbol)`: applies a legal move; throws on invalid ones.
+- `checkGameState(GameContext, Player)`: detects wins (rows/cols/diagonals) and draw (no empties). Updates `GameContext` accordingly.
+- `displayBoard()`: prints a clean, readable board (e.g., `X | . | O`).
 
-🧑‍💻Candidate: Certainly! Let me outline the flow of the game based on my understanding of the Tic Tac Toe game first:
+### GameContext and GameState (State Pattern)
+- `GameContext` holds the current `GameState` and answers “is the game over?”
+- Concrete states: `XWonState`, `OWonState`, `DrawState`—each owns its own message via `getResultMessage()`.
+- `TicTacToeGame` doesn’t branch on types; it just prints the message (polymorphism).
 
-• We have a standard 3x3 grid.
+## A single turn: end‑to‑end
 
-• Two players take turns marking the spaces on the grid with 'X' and 'O'.
+1) Controller prints the board.
+2) Asks the current player’s strategy for a move → `Position`.
+3) Board validates and applies the symbol at that position.
+4) Board evaluates the outcome and updates `GameContext` (win/draw/continue).
+5) If continuing, controller switches the current player; otherwise, it announces the result.
 
-• The game continues until one player gets three of their marks in a row (horizontal, vertical, or diagonal), or the grid is filled resulting in a draw.
+## Patterns in play (and why)
 
-Is this the kind of game flow you had in mind? 
+- Strategy: isolate “how to choose a move” from the rest of the game.
+- State: make terminal outcomes explicit and self‑describing (`getResultMessage()`).
+- Facade/Controller: route decisions through a single orchestrator (`TicTacToeGame`).
 
-‍
+> What about Observer and Factory?
+> Not needed yet. They’re natural extensions: an observer for logging/telemetry/UI updates; a factory for building players from config. Keep them in mind; don’t add them prematurely.
 
-🧑‍💼Interviewer: Yes, you are in-line with the flow, Please continue ahead.
+## Rules recap (today) and evolution
 
-‍
+- Win: a full row, column, main diagonal, or anti‑diagonal of the same non‑empty symbol.
+- Draw: no empty cells and no winner.
 
-🧑‍💻Candidate: Sure, I'd like to clarify a few requirements to ensure we're on the same page:
+Future‑ready: on larger boards, replace win detection with a generic “k‑in‑a‑row” scan (right, down, diag‑down‑right, diag‑down‑left) and make `k` configurable.
 
-• Are we focusing on a standard 3x3 board?
+## Quick start
 
-• Will this be a two-player human game?
+Initialization from `Main`:
 
-• What are the core requirements ?
+```java
+PlayerStrategy playerXStrategy = new HumanPlayerStrategy("Player X");
+PlayerStrategy playerYStrategy = new HumanPlayerStrategy("Player O");
+TicTacToeGame game = new TicTacToeGame(playerXStrategy, playerYStrategy, 3, 3);
+game.play();
+```
 
-‍
+That’s it. Strategies decide moves; the controller orchestrates; the board enforces rules; the context tells the end of the story.
 
-Point 2 : Clarifying requirements
+## Extending the game (no rewrites required)
 
-🧑‍💼Interviewer: We want a simple system that:
+- Add an AI: implement `PlayerStrategy` and pass it at startup.
+- Change board size: alter `(rows, cols)` when creating `TicTacToeGame`.
+- UI swap: keep logic intact and replace `HumanPlayerStrategy` with one that talks to a GUI or web layer.
+- Telemetry/UX: add an observer layer to react to game events without touching the core loop.
 
-• Supports a standard 3x3 Tic Tac Toe game
-
-• Allows two human players to play
-
-• Provides move validation
-
-• Detects win or draw conditions
-
-‍
-
-🧑‍💻Candidate: To ensure we're on the same page, let me write down the key requirements:
-
-1. A 3x3 game board.
-
-2. Two human players.
-
-3. Alternating turns between 'X' and 'O'.
-
-4. Move validation to ensure no wrong moves are made.
-
-5. Detection of win or draw scenarios.
-
-‍
-
-🧑‍💼Interviewer: Perfect, Let's Proceed.
-
-‍
-
-Point 3 : Identifying Key Components : 
-
-🧑‍💻Candidate: Now that we have the requirements clarified, let's identify the key components of our Tic Tac Toe system:
-
-‍
-
-1. Piece: Represents 'X' and 'O'.
-
-○ Enum: Symbol
-
-○ Description: This enum represents the two possible pieces in the game: 'X' and 'O', as well as an empty cell.
-
-public enum Symbol {
-	  X, O, EMPTY
-	}
-
-2. Board: The 3x3 grid where the game is played.
-
-○ Class: Board
-
-○ Description: This class represents the game board, which can be of any size. It includes methods for validating moves, making moves, and checking the game state.
-
-public class Board {
-
-	}
-
-
-3. Player: Each player (either X or O) taking turns.
-
-○ Class: Player
-
-○ Description: This class represents a player in the game. It stores the player's symbol and strategy for making moves. 
-
-public class Player {
-    Symbol symbol;
-    PlayerStrategy playerStrategy;
-
-    public Player(Symbol symbol, PlayerStrategy playerStrategy){
-        this.symbol = symbol;
-        this.playerStrategy = playerStrategy;
-    }
-
-    public Symbol getSymbol(){
-        return symbol;
-    }
-
-    public PlayerStrategy getStrategy(){
-        return playerStrategy;
-    }
-}
