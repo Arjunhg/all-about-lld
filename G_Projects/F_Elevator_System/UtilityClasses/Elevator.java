@@ -49,6 +49,9 @@ public class Elevator {
         }
     }
 
+    public Direction getDirection(){
+        return direction;
+    }
     public void setDirection(Direction newDirection){
         this.direction = newDirection;
     }

@@ -27,6 +27,14 @@ public class ElevatorRequest implements ElevatorCommand {
         }
     }
 
+    public Direction getDirection(){
+        return requestDirection;
+    }
+
+    public boolean checkIsInternalRequest(){
+        return isInternalRequest;
+    }
+
     public int getFloor(){
         return floor;
     }

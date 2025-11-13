@@ -3,7 +3,7 @@ package G_Projects.F_Elevator_System.UtilityClasses;
 public class Building {
     private String name;
     private int numberOfFloors;
-    private ElevatorController elevatorController;
+    private ElevatorController elevatorController; //Controller to manage elevators in the building
 
     public Building(String name, int numberOfFloors, ElevatorController elevatorController) {
         this.name = name;
