@@ -5,10 +5,10 @@ public class Building {
     private int numberOfFloors;
     private ElevatorController elevatorController; //Controller to manage elevators in the building
 
-    public Building(String name, int numberOfFloors, ElevatorController elevatorController) {
+    public Building(String name, int numberOfFloors, int numberOfElevators){ 
         this.name = name;
         this.numberOfFloors = numberOfFloors;
-        this.elevatorController = new ElevatorController(numberOfFloors, numberOfFloors);
+        this.elevatorController = new ElevatorController(numberOfElevators, numberOfFloors);
     }
 
     public String getName(){
