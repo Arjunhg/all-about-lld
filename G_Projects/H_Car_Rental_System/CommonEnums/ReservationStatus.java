@@ -1,4 +1,4 @@
-package G_Projects.H_Car_Rental_System.CommonEnums;
+package CommonEnums;
 
 public enum ReservationStatus {
     PENDING,

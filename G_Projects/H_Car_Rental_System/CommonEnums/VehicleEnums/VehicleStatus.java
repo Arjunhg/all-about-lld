@@ -1,4 +1,4 @@
-package G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums;
+package CommonEnums.VehicleEnums;
 
 public enum VehicleStatus {
     AVAILABLE, 

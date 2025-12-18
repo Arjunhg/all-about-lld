@@ -1,7 +1,7 @@
-package G_Projects.H_Car_Rental_System.VehicleFactoryPattern.ConcreteVehicles;
+package VehicleFactoryPattern.ConcreteVehicles;
 
-import G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums.VehicleType;
-import G_Projects.H_Car_Rental_System.VehicleFactoryPattern.Vehicle;
+import CommonEnums.VehicleEnums.VehicleType;
+import VehicleFactoryPattern.Vehicle;
 
 public class LuxuryVehicle extends Vehicle{
     private static final double RATE_MULTIPLIER = 1.0;

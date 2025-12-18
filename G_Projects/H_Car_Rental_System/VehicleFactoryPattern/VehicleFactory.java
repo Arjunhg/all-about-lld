@@ -1,12 +1,12 @@
-package G_Projects.H_Car_Rental_System.VehicleFactoryPattern;
+package VehicleFactoryPattern;
 
-import G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums.VehicleType;
-import G_Projects.H_Car_Rental_System.VehicleFactoryPattern.ConcreteVehicles.EconomyVehicle;
-import G_Projects.H_Car_Rental_System.VehicleFactoryPattern.ConcreteVehicles.LuxuryVehicle;
-import G_Projects.H_Car_Rental_System.VehicleFactoryPattern.ConcreteVehicles.SUVVehicle;
+import CommonEnums.VehicleEnums.VehicleType;
+import VehicleFactoryPattern.ConcreteVehicles.EconomyVehicle;
+import VehicleFactoryPattern.ConcreteVehicles.LuxuryVehicle;
+import VehicleFactoryPattern.ConcreteVehicles.SUVVehicle;
 
 public class VehicleFactory {
-    public Vehicle createVehicle(VehicleType vehicleType, String registrationNumber, String model, double baseRentalPrice){
+    public static Vehicle createVehicle(VehicleType vehicleType, String registrationNumber, String model, double baseRentalPrice){
         switch(vehicleType){
             case ECONOMY:
                 return new EconomyVehicle(registrationNumber, model, vehicleType, baseRentalPrice);

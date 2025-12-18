@@ -1,7 +1,7 @@
-package G_Projects.H_Car_Rental_System.VehicleFactoryPattern;
+package VehicleFactoryPattern;
 
-import G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums.VehicleStatus;
-import G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums.VehicleType;
+import CommonEnums.VehicleEnums.VehicleStatus;
+import CommonEnums.VehicleEnums.VehicleType;
 
 public abstract class Vehicle {
     private String registrationNumber;

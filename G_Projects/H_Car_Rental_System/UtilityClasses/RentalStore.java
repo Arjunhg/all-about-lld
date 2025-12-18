@@ -1,4 +1,4 @@
-package G_Projects.H_Car_Rental_System.UtilityClasses;
+package UtilityClasses;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import G_Projects.H_Car_Rental_System.CommonEnums.VehicleEnums.VehicleStatus;
-import G_Projects.H_Car_Rental_System.VehicleFactoryPattern.Vehicle;
+import CommonEnums.VehicleEnums.VehicleStatus;
+import VehicleFactoryPattern.Vehicle;
 
 // Manages opeartions related to rental store and contains vehicle inventory
 
@@ -45,6 +45,10 @@ public class RentalStore {
         return vehicle != null && vehicle.getStatus() == VehicleStatus.AVAILABLE;
     }
 
+    public Vehicle getVehicle(String registrationNumber){
+        return vehicleInventory.get(registrationNumber);
+    }
+
     public Map<String, Vehicle> getVehicleInventory(){
         return vehicleInventory;
     }
@@ -58,5 +62,6 @@ public class RentalStore {
     public String getName(){
         return name;
     }
+
      
 }
