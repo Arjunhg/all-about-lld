@@ -1,0 +1,22 @@
+Explanation:
+• TextEditor (Originator):
+
+○ Holds the current text and can create a Memento via the save() method.
+
+○ Restores its state using the restore(Memento m) method.
+
+‍
+
+• Memento:
+
+○ Encapsulates the state of the TextEditor (i.e., the text) in an immutable way.
+
+‍
+
+• EditorHistory (Caretaker):
+
+○ Manages two stacks (undoStack and redoStack) to support both undo and redo operations.
+
+○ Provides methods to save new states and retrieve states for undo/redo without affecting the
+
+TextEditor's internal logic.

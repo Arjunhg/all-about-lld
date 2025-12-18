@@ -1,0 +1,6 @@
+🏷️Why Use a Generic Instead of a Wildcard? 
+1. When You Need Type Consistency Across the Method : 
+
+If a method must ensure that all arguments or returned values are of the same specific type, use generics. Generics explicitly define the type 
+
+https://codewitharyan.com/tech-blogs/generics-and-wildcards

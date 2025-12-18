@@ -11,15 +11,36 @@ import G_Projects.F_Elevator_System.CommonEnums.ElevatorState;
 import G_Projects.F_Elevator_System.ObserverPattern.ElevatorObserver;
 
 // Represent individual elevators in the system
+/*
+ * 🏢 ELEVATOR CLASS OVERVIEW
+ * 
+ * ⚙️  CORE FUNCTIONALITIES:
+ * • Manages individual elevator operations and state transitions
+ * • Handles elevator movement between floors with direction control
+ * • Processes and queues floor requests from users
+ * • Maintains current position and operational status
+ * 
+ * 🔄 OBSERVER PATTERN IMPLEMENTATION:
+ * • Notifies registered observers about elevator state changes
+ * • Broadcasts floor change events to all listening components
+ * • Enables real-time monitoring and system coordination
+ * • Supports multiple observers for different system components
+ * 
+ * 🎯 KEY RESPONSIBILITIES:
+ * • State management (IDLE, MOVING, STOPPED)
+ * • Request queue processing and validation
+ * • Floor-to-floor movement coordination
+ * • Real-time event notification system
+ */
 
 public class Elevator {
-    private int id;
+    private int id; //unique identifier for each elevator
     private int currentFloor;
     private Direction direction;
     private ElevatorState state; // idle, moving, doors open/closed etc
 
     private List<ElevatorObserver> observers; //List of observers to notify on state changes
-    private Queue<ElevatorRequest> requests; // Queue of requests assigned to this elevator for each floor
+    private Queue<ElevatorRequest> requests; // Queue of requests assigned to this elevator for each floor(up/down)
 
     public Elevator(int id){
         this.id = id;
@@ -30,6 +51,7 @@ public class Elevator {
         this.requests = new LinkedList<>();
     }
 
+    // Observer to monitor elevator state changes
     public void addObserver(ElevatorObserver observer){
         observers.add(observer);
     }
@@ -56,6 +78,7 @@ public class Elevator {
         this.direction = newDirection;
     }
 
+    // Set new state for elevator and notify observers
     public void setState(ElevatorState newState){
         this.state = newState;
         notifyStateChange();
@@ -63,13 +86,14 @@ public class Elevator {
 
     // Add new floor request to queue
     public void addRequest(ElevatorRequest request){
+        // Avoid duplicate requests
         if(!requests.contains(request)){
             requests.add(request);
         }
 
         int requestedFloor = request.getFloor();
 
-        if(state==ElevatorState.IDLE && request!=null){
+        if(state==ElevatorState.IDLE && request!=null && !requests.isEmpty()){
             if(requestedFloor > currentFloor){
                 setDirection(Direction.UP);
             } else if(requestedFloor < currentFloor){
@@ -99,6 +123,7 @@ public class Elevator {
         }
     }
 
+    // What happens when elevator reaches a requested floor?
     private void completeArrival(){
         // Stop elevator and notify observers
         setState(ElevatorState.STOPPED);

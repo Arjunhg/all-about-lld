@@ -1,0 +1,135 @@
+--> We are making document editor like google docs
+
+--> Features:
+    - A document which can be edited
+    - Can add text, image. Our document editor support only these two for now.
+    - It should be scalable to include future features like adding video, audio, etc.
+
+--> Whenever encountering LLD there are two way to approach it:
+    - Top-Down approach
+        : We create topmost element of any application and then add features to it.
+    - Bottom-Up approach
+        : We start with the smallest element and then add features to it.
+
+--> First we will create bad design:
+    - class DocumentEditor
+        : This DE have many text and images, so we need to store them.
+        : For this we can use List.
+            - But two seperate list for each or single list?
+            - We will use single list for both images and text as with using two seperate list it would become difficult to keep track in which order user is added images and text.
+
+        : We can store text in string. And since we are using same list it would be better to store image in string too, but for image we will store it's path as string.
+
+        : List<String> elements;
+
+        : addText(String text);
+        : addImage(String path);
+        
+        : renderDocument(); -> will loop through all element list and render them. We can render whole document and output it as string.
+
+        : saveToFile();
+
+    - Issue:
+        : Breaking SRP, OCP and since there's only one class there is no LIP, DIP, ISP
+
+--> Moving on to good design:
+
+    - First we will move element list to another class so that we can support multiple types of elements. And to do this we can use polymorphism. We can put it in abstract or interface class and then can have it's multiple subtype
+
+    -   abstract class DocumentElement {
+                only one method: render();
+        }
+
+        : Now this can have multiple child subclass like Text and Image element
+
+    - Create a document class which can perform crud operation on DocumentElement list.
+
+        : Document "has a" DocumentElement -> one to many relationship
+
+        list<DocumentElement> elements;
+
+        addElement(DocumentElement element);
+        removeElement(DocumentElement element);
+        renderDocument(); -> this render method of Document class will loop through all elements and render them. As it doen't itselt know how to render element so it takes help from DocumentElement class render method.
+
+            for(el : element){
+                el.render(); -> el can be Text or Image
+            }
+
+            Delegating render method to DocumentElement class
+
+    - saveToFile should not be job of Document Editor class, instead it should be ina persistent class
+
+        : abstract class Persistence{
+            save();
+        }
+
+        Since it is abstract it's scalable and can be used for multiple storage like database, file, etc.: saveToFile();, saveToDatabase(); etc
+
+    - Now we will create main class DocumentEditor
+
+        : We have removed everything from it 
+
+        : Now it doesn't need to know everthing. It will delegate all the things it was doing before to other classes.
+
+        : It should have :
+
+            - DocumentEditor should have a document with "has a" relationship with Document class
+
+                Document doc;
+
+            - It should have a Persistence class which is "has a" relationship with Persistence class so that it can store.
+
+                Persistence persist;
+
+            - Sinc DocumentEditor is client interactive it will have method:
+
+                addText(String text); -> will call Document class addElement method
+                addImage(String path);
+
+                renderDocument(); -> will call Document class renderDocument method which will loop through DocumentElement elements and render them.
+
+                save(); -> will call persist.save(); of Persistence object which will call saveToFile() or saveToDatabase() method of Persistence class depending on which reference is passed to it.
+
+
+--> DocumentEdior still have all the method which were before but now it's job is to delegate all the things to other classes.
+
+    : Now it follows:
+        - SPR, OCP, LSP, ISP, DIP (DIP is followed because it means high level module and low level module should not interacy directly with each other. And in this case it's followed as: DocumentEditor doesn't (high level) doesn't directly interacts with low level(saveToFile, saveToDB), instead it does so by having an abstracttion in between)
+
+
+--> Although one could argue if SPR is really followed. DocumentEditor has not more than one reason to change but it knows more than one reason it could change. For example if render() method os Document class is removed and save() method of persistence class is removed. DocumentEditor will not break, it knows more than one reason to change.
+
+--> To handle this what we can do is take out render() method from Document class and make a seperate class of it called DocumentRenderer as:
+
+    - DocumentRenderer{
+        Document doc;
+        render();
+    }
+
+    - Now to render() the elements what render method will do is it will expect doc to return the elements so we can use doc.getElements() method in render().
+
+    - To do this we will have to update Document class to return the elements as:
+
+        - Document{
+            List<DocumentElement> element;
+            addElement(DocumentElement element);
+            getElements();
+        }
+
+    - Now Document class have only one responsibility and that is to perform crud and DocumentRenderer class will handle rendering.
+
+
+--> Now DocumentEdior should only have the job of interacting with client so it should only have addText and addImage method not save() method and render() method.
+
+    - Updated:
+        class DocumentEdior{
+            Document doc;
+            addText(String text);
+            addImage(String path);
+        }
+
+--> Who will do save and render now? Rest job is of client. We will have client who will interact with rest of the classes.
+
+    : Client will have object of DocumentRenderer, DocumentEditor and Persistence class.
+    : Client is coupled with rest but internally everything is loosely coupled.

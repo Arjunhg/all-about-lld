@@ -1,0 +1,5 @@
+--> Why not use strategy in Player of chess like we did in Player of tic-tac-toe
+
+--> Why not use singleton pattern in tic-tac-toe? Singleton is bad for both due to issues with unit testing and multiple games creation so update to dependency injection.
+
+But with both we will be using observer pattern. For singleton it acts as legacy code and for dependency injection it is a good idea.

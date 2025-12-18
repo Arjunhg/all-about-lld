@@ -1,0 +1,28 @@
+📋 UML Diagram Analysis - Template Design Pattern
+
+🔍 What the Diagram Shows:
+    • The Diagram.png illustrates a classic Template Design Pattern implementation
+    • Features two concrete beverage classes inheriting from an abstract base class
+
+🏗️ Class Structure:
+    • Abstract Base Class: Beverage
+      ├── Defines the template method: prepareRecipe()
+      ├── Provides common implementations: boilWater()
+      └── Provides common implementations: pourInCup()
+    
+    • Concrete Subclasses:
+      ├── CoffeeBeverage
+      └── TeaBeverage
+
+⚡ Key Implementation Details:
+    • Both subclasses inherit from the abstract Beverage class
+    • Template method prepareRecipe() is defined in the parent class
+    • Common methods (boilWater, pourInCup) are shared across subclasses
+    • Variable methods are implemented by each subclass:
+      ├── brew() - customized per beverage type
+      └── addCondiments() - specific to each beverage
+
+🎯 Pattern Benefits:
+    • Code reuse through shared common methods
+    • Consistent algorithm structure via template method
+    • Flexibility for subclasses to customize specific steps

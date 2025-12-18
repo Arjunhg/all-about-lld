@@ -1,0 +1,1 @@
+Define Common Interface(SmartComponent) -> Create concrete classes for individual devices -> Create composite classes for groups(The composite classes represent groups of components (e.g., Room, Floor, House).) -> Build hierarchies

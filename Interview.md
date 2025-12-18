@@ -120,3 +120,156 @@ Key points about package-private (default) access:
 • Encapsulation: It provides a level of encapsulation, restricting access to internal implementation details within a package while allowing collaboration among classes within that package. 
 • Interfaces: It is important to note that for members of an interface, if no access modifier is specified, they are implicitly public abstract for methods and public static final for fields, not package-private. 
 
+
+4-> When to use visitor pattern, strategy pattern and chain of responsibility pattern? and what's the difference between them? : https://chat.deepseek.com/a/chat/s/33f77bb9-84d5-4e1b-bb67-2035aac4d3ff  (verified by google ai mode)
+
+5-> DIfference between composition and delegation:
+Great question — this gets to the heart of **object-oriented design**. Let’s unpack it clearly, with examples and **why your code works** even though you're mixing patterns.
+
+---
+
+## 🔷 **Inheritance vs Composition**: What's the Difference?
+
+### 1. **Inheritance** ("is-a" relationship)
+
+One class **inherits** from another — it gets all its fields and methods.
+
+```java
+class Animal {
+    void eat() {
+        System.out.println("Animal eats");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Dog barks");
+    }
+}
+```
+
+* `Dog` **is an** `Animal`
+* `Dog` gets `eat()` method from `Animal` automatically
+
+### ✅ Use Inheritance when:
+
+* There is a **clear is-a relationship**
+* You want to **extend or specialize** base class behavior
+
+> Example: A `King` **is a** `Piece`
+
+---
+
+### 2. **Composition** ("has-a" relationship)
+
+One class **contains** another — it delegates behavior.
+
+```java
+class Engine {
+    void start() {
+        System.out.println("Engine starts");
+    }
+}
+
+class Car {
+    private Engine engine;
+
+    Car(Engine engine) {
+        this.engine = engine;
+    }
+
+    void start() {
+        engine.start(); // delegation
+    }
+}
+```
+
+* `Car` **has an** `Engine`
+* Car **uses** Engine to do its job, but doesn’t inherit from it
+
+### ✅ Use Composition when:
+
+* You want to **delegate behavior** (like strategy pattern)
+* You want to **avoid tight coupling**
+* You might **change behavior at runtime** (swap strategies, etc.)
+
+> Example: A `Piece` **has a** `MovementStrategy`
+
+---
+
+## 🔶 Why Your Code “Works” Even If `Piece implements MovementStrategy`
+
+You're seeing **no compile error** because:
+
+* Java allows a class to both **implement an interface** and **delegate to another object** of that same interface.
+* But this causes **confusion and breaks design clarity**.
+
+### In Your Code:
+
+```java
+public abstract class Piece implements MovementStrategy {
+    private MovementStrategy movementStrategy;
+
+    public boolean canMove(...) {
+        return movementStrategy.canMove(...);
+    }
+}
+```
+
+Here’s what’s happening:
+
+* You’re saying `Piece` **is a** `MovementStrategy` (`implements`)
+* But you’re also saying `Piece` **has a** `MovementStrategy` (`movementStrategy`)
+* That’s **redundant**, and leads to confusion.
+
+It compiles, but it **violates the Single Responsibility Principle (SRP)** and the **Liskov Substitution Principle (LSP)** — key parts of clean OOP design.
+
+---
+
+## ✅ Better Design: **Use Composition Alone**
+
+```java
+public abstract class Piece {
+    private MovementStrategy movementStrategy;
+
+    public boolean canMove(...) {
+        return movementStrategy.canMove(...);
+    }
+}
+```
+
+This says:
+
+* A `Piece` **uses** a `MovementStrategy`
+* It’s not pretending to **be** one
+* Clearer and more maintainable
+
+---
+
+## 🧠 Analogy
+
+Think of inheritance vs composition like roles in a team:
+
+* **Inheritance**: "I'm a manager, so I inherit all employee traits + some new powers."
+* **Composition**: "I'm a developer, and I work with a Jira Board — I don’t **inherit** Jira Board, I **use** it."
+
+---
+
+## ✅ Summary
+
+| Feature      | Inheritance                              | Composition                                   |
+| ------------ | ---------------------------------------- | --------------------------------------------- |
+| Relationship | is-a                                     | has-a                                         |
+| Coupling     | Tightly coupled                          | Loosely coupled                               |
+| Flexibility  | Low (hard to change base class behavior) | High (easy to swap components)                |
+| Code Reuse   | Easy, but risky                          | Safe and modular                              |
+| Preferred?   | For clear hierarchies                    | For behaviors and flexibility (like Strategy) |
+
+---
+
+## ❓ When to Use Which?
+
+* Use **inheritance** for **core type hierarchies**: `Piece extends ChessComponent`
+* Use **composition** for **behavior injection or delegation**: `Piece has MovementStrategy`
+
+Let me know if you'd like real examples of both applied to your chess game — like `KnightPiece` or a `KnightMovementStrategy`.

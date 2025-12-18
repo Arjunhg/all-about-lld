@@ -1,0 +1,7 @@
+• Relationships Illustrated 🤝
+
+○ Inheritance: RedState, GreenState, and YellowState implement the TrafficLightState interface, indicated by the hollow arrows (<|..).
+
+○ Association: TrafficLightContext has a TrafficLightState, shown by the solid arrow (->).
+
+‍
