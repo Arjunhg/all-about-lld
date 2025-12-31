@@ -22,11 +22,28 @@ public class KeyBasedExecutor {
     public <T> CompletableFuture<T> submitTask(Object key, Supplier<T> task){
         int idx = getExecutorIndexForKey(key);
         ExecutorService executor = executors[idx];
-        return CompletableFuture.supplyAsync(task, executor);
+        return CompletableFuture.supplyAsync(task, executor); // queue the task instead of sequentially executing it.
     }
+    // Key is mapped to exactly one executor and that executor has ONE thread
+
+    /* Why use completable future here?
+    - Might be slow (DB, eviction, locking)
+    - Should not block caller threads
+    - Needs ordering guarantees per key
+     */
 
     public int getExecutorIndexForKey(Object key){
-        return Math.abs(key.hashCode()) % numExecutors;
+        // return Math.abs(key.hashCode()) % numExecutors;
+        /* hashCode returns an int. And int range from -2,147,483,648 to 2,147,483,647
+        - Many standard hash functions internally uses: int hash = 31 * hash + fieldHash;
+        - Overflow is expected. If it reaches Integer.MIN_VALUE, it's still negative because there is no positive counterpart for it.
+        - Example:
+            String s = "\u8000";   // a valid Unicode character
+            int h = s.hashCode(); // h == Integer.MIN_VALUE
+            - This is not theoretical — it happens.
+        */
+        return Math.floorMod(key.hashCode(), numExecutors);
+
     }
 
     public void shutDown(){
