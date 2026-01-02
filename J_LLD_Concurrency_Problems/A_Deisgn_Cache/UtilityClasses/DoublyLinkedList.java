@@ -4,35 +4,36 @@ public class DoublyLinkedList<K> {
     private DoublyLinkedListNode<K> head;
     private DoublyLinkedListNode<K> tail;
 
-    public DoublyLinkedList(){
+    public DoublyLinkedList() {
         this.head = null;
         this.tail = null;
     }
 
-    public void addNodeAtTail(DoublyLinkedListNode<K> node){
-        if(tail == null){
+    public void addNodeAtTail(DoublyLinkedListNode<K> node) {
+        if (tail == null) {
             head = node;
             tail = node;
-        }else{
+        } else {
             tail.next = node;
             node.prev = tail;
-            node = tail;
+            tail = node;
         }
         node.next = null;
     }
 
-    public void detatchNode(DoublyLinkedListNode<K> node){
-        if(node == null) return;
-        if(node.prev != null){
+    public void detatchNode(DoublyLinkedListNode<K> node) {
+        if (node == null)
+            return;
+        if (node.prev != null) {
             node.prev.next = node.next;
-        }else{
+        } else {
             // Head node
             head = node.next;
         }
 
-        if(node.next != null){
+        if (node.next != null) {
             node.next.prev = node.prev;
-        }else{
+        } else {
             tail = node.prev;
         }
 
@@ -40,16 +41,16 @@ public class DoublyLinkedList<K> {
         node.next = null;
     }
 
-    public DoublyLinkedListNode<K> getHead(){
+    public DoublyLinkedListNode<K> getHead() {
         return head;
     }
 
-    public void removeHead(){
-        if(head != null){
-            if(head.next != null){
+    public void removeHead() {
+        if (head != null) {
+            if (head.next != null) {
                 head = head.next;
                 head.prev = null;
-            }else{
+            } else {
                 head = null;
                 tail = null;
             }
