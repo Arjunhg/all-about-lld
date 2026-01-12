@@ -20,7 +20,7 @@ public class RateLimiterFactory {
             int capacity = (int) config.getOrDefault("capacity", 10);
             int refreshRate;
             if(config.containsKey("refreshRate")){
-                refreshRate = (int) config.get("refreshRate");
+                refreshRate = (int) config.get("refreshRate"); // creates an entirely new configuration unlike updateConfiguration which updates existing configuration
             } else {
                 double tokenPerSecond = (double) config.getOrDefault("tokenPerSecond", 10.0);
                 refreshRate = (int) Math.round(tokenPerSecond);
