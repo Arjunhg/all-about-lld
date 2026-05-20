@@ -6,9 +6,7 @@ class OTurnState(GameState):
     def next(self, context, player, has_won: bool):
         if has_won:
             from GameStateHandler.ConcreteStates.o_won_state import OWonState
-            from GameStateHandler.ConcreteStates.x_won_state import XWonState
-
-            context.set_state(OWonState() if player.get_symbol() == Symbol.O else XWonState())
+            context.set_state(OWonState())
         else:
             from GameStateHandler.ConcreteStates.x_turn_state import XTurnState
 

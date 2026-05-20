@@ -4,6 +4,8 @@ from GameStateHandler.ConcreteStates.draw_state import DrawState
 
 class Board:
     def __init__(self, rows: int, cols: int):
+        if rows <= 0 or cols <= 0:
+            raise ValueError("rows and cols must be greater than 0")
         self.rows = rows
         self.cols = cols
         self.grid = [[Symbol.EMPTY for _ in range(cols)] for _ in range(rows)]
