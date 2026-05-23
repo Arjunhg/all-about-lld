@@ -3,6 +3,8 @@ from FoodItemFactory.food_factory import FoodFactory
 
 class FoodSpawner:
     def __init__(self, positions, bonus_every_k: int):
+        if not isinstance(positions, (list, tuple)) or len(positions) == 0:
+            raise ValueError("positions must be a non-empty list or tuple")
         self.positions = positions
         self.bonus_every_k = max(2, bonus_every_k)
         self.index = 0

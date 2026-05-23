@@ -43,16 +43,16 @@ class SnakeGame:
             or new_head_col >= self.game_board.get_width()
         )
 
-        curr_tail = self.snake.tail()
-        self_collision = (new_head in self.snake_map) and not (new_head == curr_tail)
-
-        if crosses_boundary or self_collision:
-            return -1
-
         current_item = self.food_spawner.current_item()
         ate_food = False
         if current_item is not None:
             ate_food = (current_item.row == new_head_row) and (current_item.col == new_head_col)
+
+        curr_tail = self.snake.tail()
+        self_collision = (new_head in self.snake_map) and not (new_head == curr_tail and not ate_food)
+
+        if crosses_boundary or self_collision:
+            return -1
 
         if ate_food:
             self.score_service.add(current_item)

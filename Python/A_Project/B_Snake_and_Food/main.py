@@ -35,10 +35,14 @@ def main():
 
 	game_running = True
 	while game_running:
-		user_input = input("Enter move (W/A/S/D) or Q to quit: ").strip().upper()
+		try:
+			user_input = input("Enter move (W/A/S/D) or Q to quit: ").strip().upper()
+		except EOFError:
+			print(f"\nFinal Score: {game.get_score()}")
+			break
 
 		if user_input == "Q":
-			print(f"Thanks for playing! Final Score: {game.get_score()}")
+			print(f"Final Score: {game.get_score()}")
 			game_running = False
 			continue
 
