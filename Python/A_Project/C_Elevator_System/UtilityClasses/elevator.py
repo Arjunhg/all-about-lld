@@ -44,6 +44,9 @@ class Elevator:
 
         requested_floor = request.get_floor()
         if self._state == ElevatorState.IDLE and request is not None:
+            if requested_floor == self._current_floor:
+                self._complete_arrival()
+                return
             if requested_floor > self._current_floor:
                 self.set_direction(Direction.UP)
             elif requested_floor < self._current_floor:
@@ -54,15 +57,18 @@ class Elevator:
         if self._state != ElevatorState.MOVING:
             return
 
+        if next_stop == self._current_floor:
+            self._complete_arrival()
+            return
+
+        self.set_direction(
+            Direction.UP if next_stop > self._current_floor else Direction.DOWN
+        )
+
         while self._current_floor != next_stop:
-            if self._direction == Direction.UP:
-                self._current_floor += 1
-            elif self._direction == Direction.DOWN:
-                self._current_floor -= 1
+            self._current_floor += 1 if self._direction == Direction.UP else -1
             self.notify_floor_change(self._current_floor)
-            if self._current_floor == next_stop:
-                self._complete_arrival()
-                return
+        self._complete_arrival()
 
     def _complete_arrival(self):
         self.set_state(ElevatorState.STOPPED)
@@ -74,6 +80,9 @@ class Elevator:
             self.set_state(ElevatorState.IDLE)
         else:
             self.set_state(ElevatorState.MOVING)
+
+    def complete_request(self):
+        self._complete_arrival()
 
     def get_elevator_id(self) -> int:
         return self._id

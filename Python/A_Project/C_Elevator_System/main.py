@@ -30,11 +30,14 @@ def main():
 	for elevator in controller.get_elevators():
 		elevator.add_observer(display)
 
-	print("Welcome to the Elevator System CLI! Type 'exit' to quit.")
+	print("Welcome to the Elevator System CLI! Type 'exit' (or choose 5) to quit.")
 	print(
 		f"Building: {building.get_name()}, Floors: {building.get_number_of_floors()}, "
 		f"Elevators: {len(controller.get_elevators())}"
 	)
+	min_floor = 0
+	max_floor = building.get_number_of_floors() - 1
+	valid_elevator_ids = {elevator.get_elevator_id() for elevator in controller.get_elevators()}
 
 	running = True
 	while running:
@@ -46,7 +49,12 @@ def main():
 		print("5. Exit")
 
 		try:
-			choice = int(input("Enter choice: ").strip())
+			raw_choice = input("Enter choice: ").strip().lower()
+			if raw_choice == "exit":
+				running = False
+				print("Exiting Elevator System CLI. Goodbye!")
+				continue
+			choice = int(raw_choice)
 		except ValueError:
 			print("Invalid choice. Please try again.")
 			continue
@@ -54,24 +62,39 @@ def main():
 		if choice == 1:
 			try:
 				elevator_id = int(input("Enter elevator ID: ").strip())
-				controller.set_current_elevator_id(elevator_id)
 				floor_number = int(input("Enter floor number: ").strip())
 				dir_input = int(input("Enter direction (1 for UP or 2 for DOWN): ").strip())
 			except ValueError:
 				print("Invalid input. Please enter numeric values.")
 				continue
+			if elevator_id not in valid_elevator_ids:
+				print("Invalid elevator ID.")
+				continue
+			if not (min_floor <= floor_number <= max_floor):
+				print(f"Invalid floor. Enter a floor between {min_floor} and {max_floor}.")
+				continue
+			if dir_input not in (1, 2):
+				print("Invalid direction. Enter 1 for UP or 2 for DOWN.")
+				continue
 
 			direction = Direction.UP if dir_input == 1 else Direction.DOWN
+			controller.set_current_elevator_id(elevator_id)
 			controller.request_elevator(elevator_id, floor_number, direction)
 		elif choice == 2:
 			try:
 				elevator_id = int(input("Enter elevator ID: ").strip())
-				controller.set_current_elevator_id(elevator_id)
 				floor_number = int(input("Enter destination floor number: ").strip())
 			except ValueError:
 				print("Invalid input. Please enter numeric values.")
 				continue
+			if elevator_id not in valid_elevator_ids:
+				print("Invalid elevator ID.")
+				continue
+			if not (min_floor <= floor_number <= max_floor):
+				print(f"Invalid floor. Enter a floor between {min_floor} and {max_floor}.")
+				continue
 
+			controller.set_current_elevator_id(elevator_id)
 			controller.request_floor(elevator_id, floor_number)
 		elif choice == 3:
 			print("Simulating next step...")
