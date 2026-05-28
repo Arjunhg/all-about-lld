@@ -8,19 +8,24 @@ class Warehouse:
         self.location = location
 
     def add_product(self, product, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Quantity must be a positive integer")
         product_id = product.get_id()
         if product_id in self.products:
             existing_product = self.products[product_id]
             existing_product.set_quantity(existing_product.get_quantity() + quantity)
+            self.products[product_id] = existing_product
         else:
             product.set_quantity(quantity)
-        self.products[product_id] = product
+            self.products[product_id] = product
         print(
             f"Added {quantity} of product ID: {product_id} to warehouse: {self.name}. "
             f"New quantity: {self.get_available_quantity(product_id)}"
         )
 
     def remove_product(self, product_id: str, quantity: int) -> bool:
+        if quantity <= 0:
+            raise ValueError("Quantity must be a positive integer")
         if product_id in self.products:
             product = self.products[product_id]
             current_quantity = product.get_quantity()

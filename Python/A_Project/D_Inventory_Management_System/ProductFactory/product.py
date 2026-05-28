@@ -23,18 +23,24 @@ class Product:
         return self._price
 
     def set_price(self, price: float):
+        if price < 0:
+            raise ValueError("price must be non-negative")
         self._price = price
 
     def get_quantity(self):
         return self._quantity
 
     def set_quantity(self, quantity: int):
+        if quantity < 0:
+            raise ValueError("quantity must be non-negative")
         self._quantity = quantity
 
     def get_threshold(self):
         return self._threshold
 
     def set_threshold(self, threshold: int):
+        if threshold < 0:
+            raise ValueError("threshold must be non-negative")
         self._threshold = threshold
 
     def get_category(self):

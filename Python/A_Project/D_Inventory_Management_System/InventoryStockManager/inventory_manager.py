@@ -10,9 +10,15 @@ class InventoryManager:
         self.replenishment_strategy = replenishment_strategy
 
     @classmethod
-    def get_instance(cls, replenishment_strategy):
+    def get_instance(cls, replenishment_strategy=None):
         if cls._instance is None:
+            if replenishment_strategy is None:
+                raise ValueError(
+                    "replenishment_strategy is required for first initialization"
+                )
             cls._instance = cls(replenishment_strategy)
+        elif replenishment_strategy is not None:
+            cls._instance.set_replenishment_strategy(replenishment_strategy)
         return cls._instance
 
     def set_replenishment_strategy(self, replenishment_strategy):
