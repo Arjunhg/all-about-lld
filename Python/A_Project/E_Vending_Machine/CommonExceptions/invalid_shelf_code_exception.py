@@ -1,0 +1,2 @@
+class InvalidShelfCodeException(RuntimeError):
+    pass
