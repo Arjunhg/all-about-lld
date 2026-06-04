@@ -18,19 +18,19 @@ class HasMoneyState(VendingMachineState):
         try:
             item = context.get_inventory().get_item(item_code)
         except InvalidShelfCodeException as exc:
-            context.clear_balance()
+            context.refund_payment()
             context.reset_selection()
             context.set_state(IdleState())
             raise ValueError(f"Invalid item code selected: {item_code}") from exc
         except ItemSoldOutException as exc:
-            context.clear_balance()
+            context.refund_payment()
             context.reset_selection()
             context.set_state(IdleState())
             raise RuntimeError(f"Selected item is out of stock: {item_code}") from exc
 
         paid = context.process_payment(item.get_price())
         if not paid:
-            context.clear_balance()
+            context.refund_payment()
             context.reset_selection()
             context.set_state(IdleState())
             raise RuntimeError(

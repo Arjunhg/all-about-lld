@@ -51,6 +51,14 @@ class VendingMachineContext:
     def clear_balance(self):
         self._coin_list.clear()
 
+    def refund_payment(self):
+        balance = self.get_balance()
+        if balance > 0:
+            print(f"Refunding amount: {balance}")
+        elif self._payment_strategy is not None:
+            print("Voiding card payment.")
+        self.clear_balance()
+
     def get_selected_item_code(self) -> int:
         return self._selected_item_code
 

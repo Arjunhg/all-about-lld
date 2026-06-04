@@ -21,12 +21,12 @@ class DispenseState(VendingMachineState):
         try:
             context.get_inventory().remove_item(code)
         except InvalidShelfCodeException as exc:
-            context.clear_balance()
+            context.refund_payment()
             context.reset_selection()
             context.set_state(IdleState())
             raise RuntimeError(f"Invalid shelf code during dispense: {code}") from exc
         except ItemSoldOutException as exc:
-            context.clear_balance()
+            context.refund_payment()
             context.reset_selection()
             context.set_state(IdleState())
             raise RuntimeError(f"Item sold out during dispense: {code}") from exc
