@@ -1,6 +1,5 @@
 from CommonExceptions.invalid_shelf_code_exception import InvalidShelfCodeException
 from CommonExceptions.item_sold_out_exception import ItemSoldOutException
-from VendingMachineStates.ConcreteStates.out_of_stock_state import OutOfStockState
 from VendingMachineStates.vending_machine_state import VendingMachineState
 
 
@@ -22,9 +21,14 @@ class DispenseState(VendingMachineState):
         try:
             context.get_inventory().remove_item(code)
         except InvalidShelfCodeException as exc:
+            context.clear_balance()
+            context.reset_selection()
+            context.set_state(IdleState())
             raise RuntimeError(f"Invalid shelf code during dispense: {code}") from exc
         except ItemSoldOutException as exc:
-            context.set_state(OutOfStockState())
+            context.clear_balance()
+            context.reset_selection()
+            context.set_state(IdleState())
             raise RuntimeError(f"Item sold out during dispense: {code}") from exc
 
         context.clear_balance()

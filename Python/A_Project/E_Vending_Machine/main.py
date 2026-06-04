@@ -42,6 +42,14 @@ def show_inventory(vending_machine: VendingMachineContext):
 			)
 
 
+def insert_coins_for_amount(vending_machine: VendingMachineContext, amount: int):
+	remaining = amount
+	for coin in (Coin.TEN_RUPEE, Coin.FIVE_RUPEE, Coin.TWO_RUPEE, Coin.ONE_RUPEE):
+		while remaining >= coin.get_value():
+			vending_machine.insert_coin(coin)
+			remaining -= coin.get_value()
+
+
 def main():
 	vending_machine = VendingMachineContext()
 	initialized = False
@@ -71,33 +79,44 @@ def main():
 
 			if payment_choice == "1":
 				print("Using Coin Payment Method")
+				raw_code = input(
+					"Enter item code to select item (or type 'exit'): "
+				).strip()
+				if raw_code.lower() in ("exit", "q"):
+					print("Exiting Vending Machine.")
+					break
+				item_code = int(raw_code)
+				item = vending_machine.get_inventory().get_item(item_code)
+				vending_machine.clear_balance()
 				vending_machine.set_payment_strategy(
 					CoinPaymentStrategy(vending_machine.get_coin_list())
 				)
-				vending_machine.insert_coin(Coin.TEN_RUPEE)
-				vending_machine.insert_coin(Coin.TWO_RUPEE)
+				insert_coins_for_amount(vending_machine, item.get_price())
+				vending_machine.select_item(item_code)
+				vending_machine.dispense()
+				show_inventory(vending_machine)
 			elif payment_choice == "2":
 				print("Using Card Payment Method")
 				card_number = input("Enter card number: ").strip()
 				expiry_date = input("Enter expiry date (MM/YY): ").strip()
-				cvv = input("Enter CVV: ").strip()
 
 				vending_machine.set_payment_strategy(
-					CardPaymentStrategy(card_number, expiry_date, cvv)
+					CardPaymentStrategy(card_number, expiry_date)
 				)
+				print("|")
+				raw_code = input(
+					"Enter item code to select item (or type 'exit'): "
+				).strip()
+				if raw_code.lower() in ("exit", "q"):
+					print("Exiting Vending Machine.")
+					break
+				item_code = int(raw_code)
+				vending_machine.select_item(item_code)
+				vending_machine.dispense()
+				show_inventory(vending_machine)
 			else:
 				print("Invalid payment choice. Please try again.")
 				continue
-
-			print("|")
-			raw_code = input("Enter item code to select item (or type 'exit'): ").strip()
-			if raw_code.lower() in ("exit", "q"):
-				print("Exiting Vending Machine.")
-				break
-			item_code = int(raw_code)
-			vending_machine.select_item(item_code)
-			vending_machine.dispense()
-			show_inventory(vending_machine)
 
 			continue_choice = input("Another transaction? (y/n): ").strip().lower()
 			if continue_choice in ("n", "no", "exit", "q"):
@@ -108,6 +127,11 @@ def main():
 			break
 		except Exception as exc:
 			print(f"Error: {exc}")
+			from VendingMachineStates.ConcreteStates.idle_state import IdleState
+
+			vending_machine.clear_balance()
+			vending_machine.reset_selection()
+			vending_machine.set_state(IdleState())
 			show_inventory(vending_machine)
 
 

@@ -13,4 +13,6 @@ class Item:
         return self._price
 
     def set_price(self, price: int):
+        if price < 0:
+            raise ValueError("Price cannot be negative")
         self._price = price
