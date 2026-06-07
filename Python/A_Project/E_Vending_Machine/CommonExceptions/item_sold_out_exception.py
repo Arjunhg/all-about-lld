@@ -1,0 +1,2 @@
+class ItemSoldOutException(RuntimeError):
+    pass
