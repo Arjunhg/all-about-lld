@@ -16,8 +16,18 @@ class ElevatorController
     @scheduling_strategy = strategy
   end
 
+  # Returns the ID of the last elevator selected via set_current_elevator_id
+  def get_current_elevator_id
+    @current_elevator_id
+  end
+
   # External request: someone on a floor calls the elevator
   def request_elevator(elevator_id, floor_number, direction)
+    unless valid_floor?(floor_number)
+      puts "ElevatorController: Invalid floor number #{floor_number} (valid: 0..#{@floors.length - 1})"
+      return
+    end
+
     puts "External request: Requesting elevator #{elevator_id} to floor #{floor_number} going #{direction}"
     elevator = get_elevator_by_id(elevator_id)
 
@@ -30,6 +40,11 @@ class ElevatorController
 
   # Internal request: passenger inside the elevator presses a floor button
   def request_floor(elevator_id, floor_number)
+    unless valid_floor?(floor_number)
+      puts "ElevatorController: Invalid floor number #{floor_number} (valid: 0..#{@floors.length - 1})"
+      return
+    end
+
     elevator = get_elevator_by_id(elevator_id)
 
     unless elevator
@@ -73,5 +88,9 @@ class ElevatorController
 
   def get_elevator_by_id(elevator_id)
     @elevators.find { |e| e.get_elevator_id == elevator_id }
+  end
+
+  def valid_floor?(floor_number)
+    floor_number.between?(0, @floors.length - 1)
   end
 end
